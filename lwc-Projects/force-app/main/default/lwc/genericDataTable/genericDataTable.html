@@ -1,0 +1,45 @@
+<template>
+    <lightning-card title="Generic Data Table" icon-name="custom:custom63">
+        <div class="slds-p-around_medium">
+            <!-- Search Input -->
+            <lightning-input
+                type="search"
+                label="Search"
+                value={searchTerm}
+                onchange={handleSearch}
+                placeholder="Search..."
+                variant="label-hidden">
+            </lightning-input>
+
+            <!-- Data Table -->
+            <lightning-datatable
+                key-field="Id"
+                data={data}
+                columns={columns}
+                onsort={handleSort}
+                sorted-by={sortedBy}
+                sorted-direction={sortedDirection}
+                hide-checkbox-column
+                draft-values={draftValues}
+                onsave={handleSave}>
+            </lightning-datatable>
+
+            <!-- Pagination -->
+            <div class="slds-p-around_medium slds-align_absolute-center">
+                <lightning-button
+                    label="Previous"
+                    onclick={handlePrevious}
+                    disabled={isFirstPage}>
+                </lightning-button>
+                <span class="slds-p-horizontal_small">
+                    Page {currentPage} of {totalPages}
+                </span>
+                <lightning-button
+                    label="Next"
+                    onclick={handleNext}
+                    disabled={isLastPage}>
+                </lightning-button>
+            </div>
+        </div>
+    </lightning-card>
+</template>
