@@ -18,6 +18,7 @@ export default class GenericDataTable extends LightningElement {
     @track totalPages = 1;
     @track totalRecords = 0;
     @track draftValues = []; // Track draft values for editable fields
+    @track wiredRecordsResult; // Store the wired response
 
     // Wire method to fetch records
     @wire(getRecords, {
@@ -29,7 +30,9 @@ export default class GenericDataTable extends LightningElement {
         pageSize: '$pageSize',
         pageNumber: '$currentPage'
     })
-    wiredRecords({ error, data }) {
+    wiredRecords(result) {
+        this.wiredRecordsResult = result; // Store the result
+        const { data, error } = result;
         if (data) {
             console.log('Data:', data); // Debugging
             this.data = data.records;
@@ -83,15 +86,17 @@ export default class GenericDataTable extends LightningElement {
     // Handle save for editable fields
     handleSave(event) {
         const draftValues = event.detail.draftValues;
+        console.log('Draft Values:', JSON.stringify(draftValues)); // Debugging
+
         saveRecords({ records: draftValues })
             .then(() => {
                 this.draftValues = []; // Clear draft values
                 this.showToast('Success', 'Records updated successfully!', 'success');
-                // Refresh data
-                return refreshApex(this.wiredRecords);
+                // Refresh the data table
+                return refreshApex(this.wiredRecordsResult);
             })
             .catch(error => {
-                // Handle both Apex and non-Apex errors
+                console.error('Error:', JSON.stringify(error)); // Debugging
                 const errorMessage = error.body ? message : error.message || 'Unknown error';
                 this.showToast('Error', 'Error updating records: ' + errorMessage, 'error');
             });
